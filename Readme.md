@@ -1,8 +1,8 @@
-# LiRaster
+# QAZWSX
 
 3D rasterizer made in C++.
 
-**⚠️Currently in Dev** 
+**⚠️Currently in Dev**
 
 ## Dependencies
 
