@@ -7,7 +7,7 @@
 ## Dependencies
 
 * [stb_image_write.h](https://github.com/nothings/stb/blob/master/stb_image_write.h)
-* [SDL3](https://www.libsdl.org/)
+* [SDL3.2.22](https://www.libsdl.org/)
 * [GLM](https://github.com/g-truc/glm)
 
 ## Quick Start

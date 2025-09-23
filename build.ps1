@@ -55,7 +55,7 @@ Write-Output "Building:"
 foreach ($file in $src_files) {
 	if ($file) {
 
-		$modifyCondition = $false
+		$modifyCondition = $true
 
 		if (Test-Path "$intermediate_dir/${file}.o") {
 			$targetModifiedDate = (Get-Item "$intermediate_dir/${file}.o").LastWriteTime

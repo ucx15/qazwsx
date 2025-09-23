@@ -25,18 +25,18 @@ Engine::~Engine() {
 
 // SDL Methods (Window Management & Event Handling)
 void Engine::SDLSetup() {
-	if(SDL_Init(SDL_INIT_EVERYTHING)) {
+	if( !SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) ) {
 		SDL_Log("SDL_Init failed: %s", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-	SDLWindow = SDL_CreateWindow("LiRaster", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W, H, SDL_WINDOW_SHOWN);
+	SDLWindow = SDL_CreateWindow("LiRaster", W, H, 0);
 	if ( !SDLWindow ) {
 		SDL_Log("SDL_CreateWindow creation failed: %s", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-    SDLRenderer =  SDL_CreateRenderer(SDLWindow, -1, SDL_RENDERER_ACCELERATED);
+    SDLRenderer =  SDL_CreateRenderer(SDLWindow, NULL);
 	if ( !SDLRenderer ) {
 		SDL_Log("SDL_CreateRenderer creation failed: %s", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -58,7 +58,7 @@ void Engine::SDLDestroy() {
 
 void Engine::handleEvents() {
 	while (SDL_PollEvent(&SDLEvent)) {
-		if (SDLEvent.type == SDL_QUIT) {
+		if (SDLEvent.type == SDL_EVENT_QUIT) {
 			isRunning = false;
 		}
 	}
@@ -317,7 +317,7 @@ void Engine::render() {
 
 	// Presenting to Display device
 	SDL_RenderClear(SDLRenderer);
-	SDL_RenderCopy(SDLRenderer, SDLTexture, NULL, NULL);
+	SDL_RenderTexture(SDLRenderer, SDLTexture, NULL, NULL);
 	SDL_RenderPresent(SDLRenderer);
 }
 
