@@ -12,12 +12,13 @@ $Optimization_flags = "-march=native"
 # $Optimization_flags = "-O3", "-mavx512f", "-march=native"
 # $Optimization_flags = "-ggdb", "-g3"
 
-$LINKER_FLAGS = "-lmingw32", "-lSDL2main", "-lSDL2", "-s"
+# $LINKER_FLAGS = "-lmingw32", "-lSDL2main", "-lSDL2", "-s"
+$LINKER_FLAGS = "-lSDL3", "-s"
 
 
 $buildAll = $false
 
-$out_file = "LiRaster.exe"
+$out_file = "qazwsx.exe"
 
 $src_files = "main", "engine", "utils", "surface", "tris"
 
@@ -25,11 +26,11 @@ $intermediate_dir = "Intermediate/"
 
 # Include Directories
 $include_dir = "Src/Include/"
-$sdl_inc_dir = "Libs/SDL2/include/SDL2"
+$sdl_inc_dir = "Libs/SDL3/include/"
 $stb_inc_dir = "Libs/"
 
 # Library Directories
-$sdl_lib_dir = "Libs/SDL2/lib"
+$sdl_lib_dir = "Libs/SDL3/lib"
 
 
 # -------- BUILD SCRIPT --------
@@ -94,7 +95,7 @@ foreach ($file in $src_files) {
 $obj_files = Get-ChildItem -Path $intermediate_dir
 
 Write-Output "Linking"
-g++ $obj_files $C_FLAGS $LINKER_FLAGS -L $sdl_lib_dir $sdl_linkables -o $out_file
+g++ $obj_files $C_FLAGS -L $sdl_lib_dir $LINKER_FLAGS -o $out_file
 
 
 # Running current build
@@ -102,7 +103,7 @@ g++ $obj_files $C_FLAGS $LINKER_FLAGS -L $sdl_lib_dir $sdl_linkables -o $out_fil
 if (Test-Path ./$out_file) {
 	Write-Output "Build Successfully"
 	Write-Output ""
-	./LiRaster
+	./qazwsx
 }
 
 else {
