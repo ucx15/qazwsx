@@ -7,16 +7,20 @@
 ## Dependencies
 
 * [stb_image_write.h](https://github.com/nothings/stb/blob/master/stb_image_write.h)
-* [SDL2](https://www.libsdl.org/)
+* [SDL3](https://www.libsdl.org/)
+* [GLM](https://github.com/g-truc/glm)
+
 ## Quick Start
-Setup SDL2 in [Libs](Libs/) directory.
+
+Setup SDL3 and GLM in [Libs](Libs/) directory.
 
 Then-
 ```
 $ ./build.ps1
-$ ./LiRaster
+$ ./qazwsx
 ```
 
 ## ShowCase
+
 ![draw_cube.png](Out/Progress/draw_cube.png)
 ![draw_quad.png](Out/Progress/draw_quad.png)

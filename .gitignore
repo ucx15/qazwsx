@@ -1,7 +1,9 @@
 Intermediate/
 Tests/
 Objs/
-Out/*.png
-Libs/SDL2
 
+Libs/SDL3
+Libs/glm
+
+Out/*.png
 *.exe
