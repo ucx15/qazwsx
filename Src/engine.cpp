@@ -106,10 +106,14 @@ void Engine::loadScene(const char *filename) {
 
 	// Point Scene Data to Engine Buffers
 
-	enVerticies = enScene.sceneVerticies;
-	enTrisBuffer = enScene.sceneTris;
-	enTriIndex = enScene.sceneTriIndex;
+	memcpy(enVerticies, enScene.sceneVerticies, enVxCount*sizeof(Vec3));
+	memcpy(enTrisBuffer, enScene.sceneTris, enTriCount*sizeof(Tris3D));
+	memcpy(enTriIndex, enScene.sceneTriIndex, 3*enTriCount*sizeof(int));
 
+	// enVerticies = enScene.sceneVerticies;
+	// enTrisBuffer = enScene.sceneTris;
+	// enTriIndex = enScene.sceneTriIndex;
+	enScene.unload();
 }
 
 

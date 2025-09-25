@@ -112,15 +112,15 @@ void Scene::loadJSONScene(const char *filename) {
 
 void Scene::unload() {
 	if (sceneVerticies) {
-		free(sceneVerticies);
+		delete [] sceneVerticies;
 		sceneVerticies = nullptr;
 	}
 	if (sceneTris) {
-		free(sceneTris);
+		delete [] sceneTris;
 		sceneTris = nullptr;
 	}
 	if (sceneTriIndex) {
-		free(sceneTriIndex);
+		delete [] sceneTriIndex;
 		sceneTriIndex = nullptr;
 	}
 

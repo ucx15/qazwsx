@@ -6,7 +6,7 @@
 
 
 # -------- BUILD SETTINGS --------
-$C_FLAGS = "-Wall", "-Wextra", "-pedantic", "-std=c++20", "-masm=intel"
+$C_FLAGS = "-Wall", "-Wextra", "-pedantic", "-std=c++20", "-masm=intel", "-Wsign-compare"
 
 $Optimization_flags = "-march=native"
 # $Optimization_flags = "-O3", "-mavx512f", "-march=native"
