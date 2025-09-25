@@ -20,7 +20,7 @@ $buildAll = $false
 
 $out_file = "qazwsx.exe"
 
-$src_files = "main", "engine", "utils", "surface", "tris"
+$src_files = "main", "engine", "utils", "surface", "tris", "scene"
 
 $intermediate_dir = "Intermediate/"
 
@@ -103,7 +103,7 @@ g++ $obj_files $C_FLAGS -L $sdl_lib_dir $LINKER_FLAGS -o $out_file
 if (Test-Path ./$out_file) {
 	Write-Output "Build Successfully"
 	Write-Output ""
-	./qazwsx
+	& ./$out_file
 }
 
 else {

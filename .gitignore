@@ -4,7 +4,10 @@ Objs/
 
 Libs/SDL3
 Libs/glm
+Libs/nlohmann_json
 
 Out/*.png
 *.exe
 *.dll
+
+.vscode/

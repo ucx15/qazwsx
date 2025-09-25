@@ -1,5 +1,4 @@
 #pragma once
-
 #include "vec.hpp"
 
 class Tris3D {

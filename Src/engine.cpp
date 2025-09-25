@@ -77,16 +77,24 @@ void Engine::engineSetup() {
 }
 
 void Engine::engineDestroy() {
+
 	MEM_DEALLOC(enTriIndex,      3*enTriCount);
+	MEM_DEALLOC(enTrisProjectedBuffer, enTriCount);
+	MEM_DEALLOC(enTrisBuffer, enTriCount);
 	MEM_DEALLOC(enSSVerticies,   enVxCount);
 	MEM_DEALLOC(enVerticies,     enVxCount);
+
 	MEM_DEALLOC(enBuffer, 		 W*H);
 	MEM_DEALLOC(enTextureBuffer, W*H);
+
+	enScene.unload();
 }
 
-void Engine::loadScene() {
-	enVxCount = 12;
-	enTriCount = 14;
+void Engine::loadScene(const char *filename) {
+	enScene.loadJSONScene(filename);
+
+	enVxCount = enScene.sceneVertexCount;
+	enTriCount = enScene.sceneTriangleCount;
 
 	MEM_ALLOC(enVerticies, Vec3, enVxCount);
 	MEM_ALLOC(enSSVerticies, Vec3, enVxCount);
@@ -96,116 +104,12 @@ void Engine::loadScene() {
 
 	MEM_ALLOC(enTriIndex, int, 3*enTriCount);
 
-	Vec3 pos = Vec3(0, 0, -1.f);
-	float rad = .125f;
-	float rad2 = .25f;
+	// Point Scene Data to Engine Buffers
 
-	// Scene Setup
-	{
-		enVerticies[0] = Vec3( pos.x-rad, pos.y+rad, pos.z+rad);
-		enVerticies[1] = Vec3( pos.x-rad, pos.y-rad, pos.z+rad);
-		enVerticies[2] = Vec3( pos.x+rad, pos.y-rad, pos.z+rad);
-		enVerticies[3] = Vec3( pos.x+rad, pos.y+rad, pos.z+rad);
+	enVerticies = enScene.sceneVerticies;
+	enTrisBuffer = enScene.sceneTris;
+	enTriIndex = enScene.sceneTriIndex;
 
-		enVerticies[4] = Vec3( pos.x-rad, pos.y+rad, pos.z-rad);
-		enVerticies[5] = Vec3( pos.x-rad, pos.y-rad, pos.z-rad);
-		enVerticies[6] = Vec3( pos.x+rad, pos.y-rad, pos.z-rad);
-		enVerticies[7] = Vec3( pos.x+rad, pos.y+rad, pos.z-rad);
-
-		enVerticies[8] = Vec3( pos.x-rad2, pos.y-rad, pos.z+rad2);
-		enVerticies[9] = Vec3( pos.x-rad2, pos.y-rad, pos.z-rad2);
-		enVerticies[10] = Vec3( pos.x+rad2, pos.y-rad, pos.z-rad2);
-		enVerticies[11] = Vec3( pos.x+rad2, pos.y-rad, pos.z+rad2);
-
-
-		// Ground Plane
-		enTrisBuffer[12] = Tris3D( enVerticies[8], enVerticies[9], enVerticies[10] );
-		enTrisBuffer[13] = Tris3D( enVerticies[10], enVerticies[11], enVerticies[8] );
-	}
-
-	// Triangle Setup
-	{
-		enTrisBuffer[0]  = Tris3D( enVerticies[7], enVerticies[6], enVerticies[5] );
-		enTrisBuffer[1]  = Tris3D( enVerticies[7], enVerticies[5], enVerticies[4] );
-
-		enTrisBuffer[2]  = Tris3D( enVerticies[0], enVerticies[1], enVerticies[2] );
-		enTrisBuffer[3]  = Tris3D( enVerticies[0], enVerticies[2], enVerticies[3] );
-
-		enTrisBuffer[4]  = Tris3D( enVerticies[4], enVerticies[0], enVerticies[3] );
-		enTrisBuffer[5]  = Tris3D( enVerticies[4], enVerticies[3], enVerticies[7] );
-
-		enTrisBuffer[6]  = Tris3D( enVerticies[1], enVerticies[5], enVerticies[6] );
-		enTrisBuffer[7]  = Tris3D( enVerticies[1], enVerticies[6], enVerticies[2] );
-
-		enTrisBuffer[8]  = Tris3D( enVerticies[4], enVerticies[5], enVerticies[1] );
-		enTrisBuffer[9]  = Tris3D( enVerticies[4], enVerticies[1], enVerticies[0] );
-
-		enTrisBuffer[10] = Tris3D( enVerticies[3], enVerticies[2], enVerticies[6] );
-		enTrisBuffer[11] = Tris3D( enVerticies[3], enVerticies[6], enVerticies[7] );
-
-		enTrisBuffer[12] = Tris3D( enVerticies[8], enVerticies[9], enVerticies[10] );
-		enTrisBuffer[13] = Tris3D( enVerticies[10], enVerticies[11], enVerticies[8] );
-	}
-
-	// Triangles sequence
-	{
-		// Back
-		enTriIndex[0] = 7;
-		enTriIndex[1] = 6;
-		enTriIndex[2] = 5;
-		enTriIndex[3] = 7;
-		enTriIndex[4] = 5;
-		enTriIndex[5] = 4;
-
-		// Front
-		enTriIndex[6] = 0;
-		enTriIndex[7] = 1;
-		enTriIndex[8] = 2;
-		enTriIndex[9] = 0;
-		enTriIndex[10] = 2;
-		enTriIndex[11] = 3;
-
-		// Top
-		enTriIndex[12] = 4;
-		enTriIndex[13] = 0;
-		enTriIndex[14] = 3;
-		enTriIndex[15] = 4;
-		enTriIndex[16] = 3;
-		enTriIndex[17] = 7;
-
-		// Bottom
-		enTriIndex[18] = 1;
-		enTriIndex[19] = 5;
-		enTriIndex[20] = 6;
-		enTriIndex[21] = 1;
-		enTriIndex[22] = 6;
-		enTriIndex[23] = 2;
-
-
-		// Left
-		enTriIndex[24] = 4;
-		enTriIndex[25] = 5;
-		enTriIndex[26] = 1;
-		enTriIndex[27] = 4;
-		enTriIndex[28] = 1;
-		enTriIndex[29] = 0;
-
-		// Right
-		enTriIndex[30] = 3;
-		enTriIndex[31] = 2;
-		enTriIndex[32] = 6;
-		enTriIndex[33] = 3;
-		enTriIndex[34] = 6;
-		enTriIndex[35] = 7;
-
-		// Ground Plane
-		enTriIndex[36] = 8;
-		enTriIndex[37] = 9;
-		enTriIndex[38] = 10;
-		enTriIndex[39] = 10;
-		enTriIndex[40] = 11;
-		enTriIndex[41] = 8;
-	}
 }
 
 
@@ -327,36 +231,23 @@ void Engine::pipeline() {
 	this->engineSetup();
 
 	// Loading Scene into Memory
-	this->loadScene();
+	this->loadScene("Scenes/default.json");
 
 
 	TIME_PT tPtSortGeo1, tPtSortGeo2, tPtProject1, tPtProject2, tPtRaster1, tPtRaster2;
 
-	for (int i=0; i<enTriCount; i++) {
-		auto c = enTrisBuffer[i].getCenter();
-		std::cout << "Tri " << i << " Center : " << c.x << ", " << c.y << ", " << c.z << "\n";
-	}
 
 	// Sorting Geometry
 	tPtSortGeo1 = TIME_NOW();
 	this->sortGeometry();
 	tPtSortGeo2 = TIME_NOW();
 
-		for (int i=0; i<enTriCount; i++) {
-		auto c = enTrisBuffer[i].getCenter();
-		std::cout << "Tri " << i << " Center : " << c.x << ", " << c.y << ", " << c.z << "\n";
-	}
-
 
 	// Projection
 	tPtProject1 = TIME_NOW();
 	this->project();
 	tPtProject2 = TIME_NOW();
 
-	// Projection
-	tPtProject1 = TIME_NOW();
-	this->project();
-	tPtProject2 = TIME_NOW();
 
 	// Rasterization
 	tPtRaster1 = TIME_NOW();

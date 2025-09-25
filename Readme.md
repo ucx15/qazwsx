@@ -9,6 +9,7 @@
 * [stb_image_write.h](https://github.com/nothings/stb/blob/master/stb_image_write.h)
 * [SDL3.2.22](https://www.libsdl.org/)
 * [GLM](https://github.com/g-truc/glm)
+* [nlohmann_json](https://github.com/nlohmann/json)
 
 ## Quick Start
 

@@ -3,17 +3,20 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/Src/include",
-                "${workspaceFolder}/Libs/",
-                "${workspaceFolder}/Libs/SDL3/include",
-                "${workspaceFolder}/Libs/glm/"
+                "${default}",
+                "${workspaceFolder}/Src/include/",
+                "${workspaceFolder}/Libs",
+                "${workspaceFolder}/Libs/SDL3/include/"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "cStandard": "c17",
             "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "C:/MyPrograms/mingw64/bin/gcc.exe",
             "cppStandard": "c++20"
         }
     ],

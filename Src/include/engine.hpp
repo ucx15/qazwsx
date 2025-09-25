@@ -7,6 +7,7 @@
 #include "surface.hpp"
 #include "rect.hpp"
 #include "tris.hpp"
+#include "scene.hpp"
 
 
 class Engine {
@@ -29,10 +30,12 @@ class Engine {
 		Vec3 *enVerticies; 		// Holds the 3D verticies of the scene
 		Tris3D *enTrisBuffer; 	// Holds the triangles to be rasterized
 
-		Vec3 *enSSVerticies; 	// Holds the projected 2D verticies of the scene
 		Tris2D *enTrisProjectedBuffer; 	// Holds the triangles that are projected
-
 		int *enTriIndex; 	    // Holds the index buffer for the triangles
+
+		Vec3 *enSSVerticies; 	// Holds the projected 2D verticies of the scene
+
+		Scene enScene;         // Scene object
 
 		// Rendering Stuff
 		bool isRunning;
@@ -54,7 +57,7 @@ class Engine {
 		void engineSetup();
 		void engineDestroy();
 
-		void loadScene();
+		void loadScene(const char *filename);
 		void project();
 		void sortGeometry(); 	// in Descending order of depth
 		void render();
