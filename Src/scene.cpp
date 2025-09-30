@@ -9,14 +9,17 @@
 Scene::Scene() {
 	sceneVertexCount = 0;
 	sceneTriangleCount = 0;
+	sceneIndexBufferSize = 0;
 
 	sceneVerticies = nullptr;
-	sceneTris = nullptr;
-	sceneTriIndex = nullptr;
+	sceneTrisRef = nullptr;
+	sceneIndexBuffer = nullptr;
 }
+
 Scene::~Scene() {
 	this->unload();
 }
+
 
 // Methods
 void Scene::loadJSONScene(const char *filename) {
@@ -41,69 +44,81 @@ void Scene::loadJSONScene(const char *filename) {
 	std::cout << "Loading Scene: " << filename << "\n";
 	sceneVertexCount = data.value("vertexCount", -1);
 	sceneTriangleCount = data.value("triangleCount", -1);
+	sceneIndexBufferSize = data.value("triangleCount", -1) * 3;
 
 	if (sceneVertexCount <= 0 || sceneTriangleCount <= 0) {
-		std::cerr << "Invalid vertex or triangle count in scene file." << std::endl;
+		std::cerr << "No vertex or triangle in scene file." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	std::cout << "Vertex Count: " << sceneVertexCount << "\n";
-	std::cout << "Triangle Count: " << sceneTriangleCount << "\n";
+	std::cout << "Vertices: " << sceneVertexCount << ", Triangles: " << sceneTriangleCount << std::endl;
 
 	sceneVerticies = new Vec3[sceneVertexCount];
-	sceneTris = new Tris3D[sceneTriangleCount];
-	sceneTriIndex = new int[3*sceneTriangleCount];
+	sceneTrisRef = new Tris3D_ref[sceneTriangleCount];
+	sceneIndexBuffer = new int[sceneIndexBufferSize];
 
-
-	if (data["vertices"].size() != sceneVertexCount) {
+	if (data["vertices"].size() != sceneVertexCount*3) {
 		std::cerr << "Vertex count mismatch in scene file." << std::endl;
+		std::cerr << "Expected " << sceneVertexCount*3 << " values, got " << data["vertices"].size() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	if (data["triangles"].size() != sceneTriangleCount) {
+	if (data["triangles"].size() != sceneTriangleCount*3) {
 		std::cerr << "Triangle count mismatch in scene file." << std::endl;
+		std::cerr << "Expected " << sceneTriangleCount*3 << " indices, got " << data["triangles"].size() << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0; i < sceneVertexCount; i++) {
-		const auto &v = data["vertices"][i];
-		auto x = v.value("x", 0.0f);
-		auto y = v.value("y", 0.0f);
-		auto z = v.value("z", 0.0f);
+	data["vertices"].is_array();
+	data["triangles"].is_array();
 
-		sceneVerticies[i].x = x;
-		sceneVerticies[i].y = y;
-		sceneVerticies[i].z = z;
+	if (!data["vertices"].is_array() || !data["triangles"].is_array()) {
+		std::cerr << "Invalid vertices or triangles format in scene file." << std::endl;
+		exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0, j = 0; i < sceneTriangleCount; i++) {
-		const auto &t = data["triangles"][i];
-		auto i1 = t.value("v1", -1);
-		auto i2 = t.value("v2", -1);
-		auto i3 = t.value("v3", -1);
+	const auto& verts = data["vertices"];
+	const auto& tris = data["triangles"];
+
+	float x, y, z;      // for vertex coords
+	int i1, i2, i3; // for triangle vertex indices
+
+	for (int i = 0, j = 0; i < sceneVertexCount; i++) {
+		Vec3 &tmp = sceneVerticies[i];
+
+		x = verts[j++];
+		y = verts[j++];
+		z = verts[j++];
+
+		tmp.x = x;
+		tmp.y = y;
+		tmp.z = z;
+	}
+
+	for (int i=0, j=0, k=0; i < sceneTriangleCount; i++) {
+		i1 = tris[j++];
+		i2 = tris[j++];
+		i3 = tris[j++];
 
 		if (i1 < 0 || i1 >= sceneVertexCount ||
 		    i2 < 0 || i2 >= sceneVertexCount ||
 		    i3 < 0 || i3 >= sceneVertexCount) {
 			std::cerr << "Invalid vertex index in triangle " << i << std::endl;
+			std::cerr << "Expected indices between 0 and " << sceneVertexCount - 1 << ", got "
+			          << i1 << ", " << i2 << ", " << i3 << std::endl;
+
 			exit(EXIT_FAILURE);
 		}
 
-		sceneTris[i].v1.x = sceneVerticies[i1].x;
-		sceneTris[i].v1.y = sceneVerticies[i1].y;
-		sceneTris[i].v1.z = sceneVerticies[i1].z;
+		Tris3D_ref &tri = sceneTrisRef[i];
 
-		sceneTris[i].v2.x = sceneVerticies[i2].x;
-		sceneTris[i].v2.y = sceneVerticies[i2].y;
-		sceneTris[i].v2.z = sceneVerticies[i2].z;
+		tri.v1 = &sceneVerticies[i1];
+		tri.v2 = &sceneVerticies[i2];
+		tri.v3 = &sceneVerticies[i3];
 
-		sceneTris[i].v3.x = sceneVerticies[i3].x;
-		sceneTris[i].v3.y = sceneVerticies[i3].y;
-		sceneTris[i].v3.z = sceneVerticies[i3].z;
-
-		sceneTriIndex[j++] = i1;
-		sceneTriIndex[j++] = i2;
-		sceneTriIndex[j++] = i3;
+		sceneIndexBuffer[k++] = i1;
+		sceneIndexBuffer[k++] = i2;
+		sceneIndexBuffer[k++] = i3;
 	}
 
 	file.close();
@@ -113,17 +128,16 @@ void Scene::loadJSONScene(const char *filename) {
 void Scene::unload() {
 	if (sceneVerticies) {
 		delete [] sceneVerticies;
-		sceneVerticies = nullptr;
 	}
-	if (sceneTris) {
-		delete [] sceneTris;
-		sceneTris = nullptr;
+	if (sceneTrisRef) {
+		delete [] sceneTrisRef;
 	}
-	if (sceneTriIndex) {
-		delete [] sceneTriIndex;
-		sceneTriIndex = nullptr;
+
+	if (sceneIndexBuffer) {
+		delete [] sceneIndexBuffer;
 	}
 
 	sceneVertexCount = 0;
 	sceneTriangleCount = 0;
+	sceneIndexBufferSize = 0;
 }

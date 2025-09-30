@@ -11,10 +11,11 @@ public:
 	// Scene Data
 	int sceneVertexCount;
 	int sceneTriangleCount;
+	int sceneIndexBufferSize;
 
-	Vec3 *sceneVerticies;    // Raw 3D Vec Verticies
-	Tris3D *sceneTris;		// Raw 3D Triangle list
-	int *sceneTriIndex;      // Index Buffer for the triangles
+	Vec3 *sceneVerticies;    	// Raw 3D Vec Verticies
+	int *sceneIndexBuffer; 		// Index Buffer
+	Tris3D_ref *sceneTrisRef;	// 3D Reference Triangles buffer
 
 public:
 	Scene();

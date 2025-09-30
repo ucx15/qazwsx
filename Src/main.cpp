@@ -1,3 +1,4 @@
+#include <iostream>
 #include "engine.hpp"
 #include "SDL3/SDL_main.h"
 

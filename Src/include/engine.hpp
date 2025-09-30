@@ -4,10 +4,10 @@
 
 #include "vec.hpp"
 #include "color.hpp"
-#include "surface.hpp"
-#include "rect.hpp"
 #include "tris.hpp"
+#include "rect.hpp"
 #include "scene.hpp"
+#include "surface.hpp"
 
 
 class Engine {
@@ -24,18 +24,14 @@ class Engine {
 		Color *enBuffer;            // Array of pixels
 		Surface enSurface;
 
+		Scene enScene;         			// Scene object
 		int enVxCount;
 		int enTriCount;
 
-		Vec3 *enVerticies; 		// Holds the 3D verticies of the scene
-		Tris3D *enTrisBuffer; 	// Holds the triangles to be rasterized
-
+		Vec3 *enVerticies; 				// Holds the 3D verticies of the scene
+		Tris3D_ref *enTrisRefBuffer; 	// Holds the triangle references to be rasterized
 		Tris2D *enTrisProjectedBuffer; 	// Holds the triangles that are projected
-		int *enTriIndex; 	    // Holds the index buffer for the triangles
 
-		Vec3 *enSSVerticies; 	// Holds the projected 2D verticies of the scene
-
-		Scene enScene;         // Scene object
 
 		// Rendering Stuff
 		bool isRunning;
@@ -58,8 +54,9 @@ class Engine {
 		void engineDestroy();
 
 		void loadScene(const char *filename);
+		void transform();
+		void sortGeometry();
 		void project();
-		void sortGeometry(); 	// in Descending order of depth
 		void render();
 		void rasterize();
 };

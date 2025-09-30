@@ -169,12 +169,15 @@ void Surface::fillNoise() {
 
 // Lines
 
+// TODO: Excessive error checking required
 // _DRAW_LINE(int x0, int y0, int x1, int y1, const Color &color, int lineWidth);
 #define _DRAW_LINE(x0, y0, x1, y1, color, lineWidth) {      \
     if (x0 < 0 || x0 >= surfWidth  ||                       \
         x1 < 0 || x1 >= surfWidth  ||                       \
         y0 < 0 || y0 >= surfHeight ||                       \
-        y1 < 0 || y1 >= surfHeight  ) return;               \
+        y1 < 0 || y1 >= surfHeight  ) {                     \
+        return;                                             \
+    }                                                       \
                                                             \
     int startX = x0;                                        \
     int startY = y0;                                        \
@@ -281,6 +284,13 @@ void Surface::drawCircle(const Vec3 &pos_vec, int r, const Color &color, int thi
     _DRAW_CIRCLE(x0, y0, r, color, thickness);
 }
 
+void Surface::drawCircle(const Vec2 &pos_vec, int r, const Color &color, int thickness) {
+    const int &x0 = pos_vec.x;
+    const int &y0 = pos_vec.y;
+
+    _DRAW_CIRCLE(x0, y0, r, color, thickness);
+}
+
 void Surface::drawCircle(const Circle &circle, const Color &color, int thickness) {
     const int &x0 = circle.x;
     const int &y0 = circle.y;
@@ -317,6 +327,13 @@ void Surface::fillCircle(int x0, int y0, int r, const Color &color) {
 }
 
 void Surface::fillCircle(const Vec3 &pos_vec, int r, const Color &color) {
+    const int &x0 = pos_vec.x;
+    const int &y0 = pos_vec.y;
+
+    _FILL_CIRCLE(x0, y0, r, color);
+}
+
+void Surface::fillCircle(const Vec2 &pos_vec, int r, const Color &color) {
     const int &x0 = pos_vec.x;
     const int &y0 = pos_vec.y;
 
@@ -427,6 +444,28 @@ void Surface::drawTris(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3, const Col
     _DRAW_TRIS(x0,y0, x1,y1, x2,y2, color, thickness);
 }
 
+void Surface::drawTris(const Vec2 &v1, const Vec2 &v2, const Vec2 &v3, const Color &color, int thickness) {
+    const int &x0 = v1.x;
+    const int &y0 = v1.y;
+    const int &x1 = v2.x;
+    const int &y1 = v2.y;
+    const int &x2 = v3.x;
+    const int &y2 = v3.y;
+
+    _DRAW_TRIS(x0,y0, x1,y1, x2,y2, color, thickness);
+}
+
+void Surface::drawTris(const Tris2D &tris, const Color &color, int thickness) {
+    const int &x0 = tris.v1.x;
+    const int &y0 = tris.v1.y;
+    const int &x1 = tris.v2.x;
+    const int &y1 = tris.v2.y;
+    const int &x2 = tris.v3.x;
+    const int &y2 = tris.v3.y;
+
+    _DRAW_TRIS(x0,y0, x1,y1, x2,y2, color, thickness);
+}
+
 void Surface::drawTris(const Tris2D_i &tris, const Color &color, int thickness) {
     const int &x0 = tris.x0;
     const int &y0 = tris.y0;
@@ -481,6 +520,28 @@ void Surface::fillTris(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3, const Col
     int y1 = v2.y;
     int x2 = v3.x;
     int y2 = v3.y;
+
+    _FILL_TRIS(x0,y0, x1,y1, x2,y2, color);
+}
+
+void Surface::fillTris(const Vec2 &v1, const Vec2 &v2, const Vec2 &v3, const Color &color) {
+    int x0 = v1.x;
+    int y0 = v1.y;
+    int x1 = v2.x;
+    int y1 = v2.y;
+    int x2 = v3.x;
+    int y2 = v3.y;
+
+    _FILL_TRIS(x0,y0, x1,y1, x2,y2, color);
+}
+
+void Surface::fillTris(const Tris2D &tris, const Color &color) {
+    int x0 = tris.v1.x;
+    int y0 = tris.v1.y;
+    int x1 = tris.v2.x;
+    int y1 = tris.v2.y;
+    int x2 = tris.v3.x;
+    int y2 = tris.v3.y;
 
     _FILL_TRIS(x0,y0, x1,y1, x2,y2, color);
 }

@@ -13,6 +13,23 @@ public:
 
 	// Methods
 	Vec3 getCenter();
+	Vec3 getNormal();
+};
+
+
+class Tris3D_ref {
+public:
+	Vec3 *v1, *v2, *v3;
+
+public:
+	// Ctors and Dtors
+	Tris3D_ref();
+	Tris3D_ref(Vec3 *a, Vec3 *b, Vec3 *c);
+	~Tris3D_ref();
+
+	// Methods
+	Vec3 getCenter();
+	Vec3 getNormal();
 };
 
 

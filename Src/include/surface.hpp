@@ -52,10 +52,12 @@ class Surface {
 
 		void drawCircle(int x0, int y0, int r, const Color &color, int thickness);
 		void drawCircle(const Vec3 &pos_vec, int r, const Color &color, int thickness);
+		void drawCircle(const Vec2 &pos_vec, int r, const Color &color, int thickness);
 		void drawCircle(const Circle &cirlce, const Color &color, int thickness);
 
 		void fillCircle(int x0, int y0, int r, const Color &color);
 		void fillCircle(const Vec3 &pos_vec, int r, const Color &color);
+		void fillCircle(const Vec2 &pos_vec, int r, const Color &color);
 		void fillCircle(const Circle &cirlce, const Color &color);
 
 
@@ -70,11 +72,15 @@ class Surface {
 
 		void drawTris(int x0, int y0, int x1, int y1, int x2, int y2, const Color &color, int thickness);
 		void drawTris(const Vec3 &v1,const Vec3 &v2, const Vec3 &v3, const Color &color, int thickness);
+		void drawTris(const Vec2 &v1, const Vec2 &v2, const Vec2 &v3, const Color &color, int thickness);
 		void drawTris(const Tris2D_i &tris, const Color &color, int thickness);
+		void drawTris(const Tris2D &tris, const Color &color, int thickness);
 
 		void fillTris(int x0, int y0, int x1, int y1, int x2, int y2, const Color &color);
 		void fillTris(const Vec3 &v1, const Vec3 &v2, const Vec3 &v3, const Color &color);
+		void fillTris(const Vec2 &v1, const Vec2 &v2, const Vec2 &v3, const Color &color);
 		void fillTris(const Tris2D_i &tris, const Color &color);
+		void fillTris(const Tris2D &tris, const Color &color);
 
 
 	private:
