@@ -2,9 +2,7 @@ Intermediate/
 Tests/
 Objs/
 
-Libs/SDL3
-Libs/glm
-Libs/nlohmann_json
+Libs/
 
 Out/*.png
 *.exe
