@@ -15,19 +15,19 @@ using namespace std::chrono;
 const float PI = 3.14159f;
 
 // Custom Colors
-const Color COLOR_WHITE(0.9f, 0.9f, 0.8f);
-const Color COLOR_BLACK(0.1f, 0.1f, 0.1f);
-const Color COLOR_RED(0.9f, 0.f, 0.2f);
-const Color COLOR_GREEN(0.f, 0.9f, 0.20f);
-const Color COLOR_BLUE(0.f, 0.2f, 0.9f);
-const Color COLOR_YELLOW(0.9f, 0.9f, 0.f);
-const Color COLOR_PURPLE(0.2f, 0.2f, 0.9f);
+const Color COLOR_WHITE(1.f);
+const Color COLOR_BLACK(0.f);
+const Color COLOR_GRAY(0.5f);
+const Color COLOR_RED(1.f, 0.f, 0.f);
+const Color COLOR_GREEN(0.f, 1.0f, 0.f);
+const Color COLOR_BLUE(0.f, 0.f, 1.f);
+const Color COLOR_YELLOW(1.f, 1.f, 0.f);
+const Color COLOR_PURPLE(1.f, 0.f, 1.f);
 
 
 // Macro Expressions
 
 #ifndef TRACK_MEMORY
-	
 	#define MEM_ALLOC(ptr, dType, N) {ptr = new dType[(N)];}
 	#define MEM_DEALLOC(ptr, N) delete[] ptr;
 

@@ -92,7 +92,7 @@ void Engine::engineDestroy() {
 
 }
 
-void Engine::loadScene(const char *filename) {
+/* void Engine::loadScene(const char *filename) {
 	enScene.loadJSONScene(filename);
 
 	enVxCount = enScene.sceneVertexCount;
@@ -119,7 +119,15 @@ void Engine::loadScene(const char *filename) {
 
 	enScene.unload();
 }
+ */
 
+ void Engine::loadScene(const char *filename) {
+	if (!enScene.loadJSONScene(filename)) {
+		exit(EXIT_FAILURE);
+	}
+
+	exit(EXIT_SUCCESS);
+}
 
 void Engine::transform() {
 
@@ -268,13 +276,13 @@ void Engine::render() {
 }
 
 
-void Engine::pipeline() {
+void Engine::pipeline(const char *filename) {
 	// Engine Class Startup code
 	this->engineSetup();
 
 	// Loading Scene into Memory
 	// this->loadScene("Scenes/default.json");
-	this->loadScene("Scenes/cube.json");
+	this->loadScene(filename);
 
 
 	TIME_PT tPtTransform1, tPtTransform2, tPtSortGeo1, tPtSortGeo2, tPtProject1, tPtProject2, tPtRaster1, tPtRaster2;

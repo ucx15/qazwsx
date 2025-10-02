@@ -1,21 +1,23 @@
 //  JSON Scene file loader
 
 #pragma once
+
+#include <cstdint>
+
 #include "vec.hpp"
-#include "tris.hpp"
+#include "object.hpp"
 
 
 class Scene {
 
 public:
 	// Scene Data
-	int sceneVertexCount;
-	int sceneTriangleCount;
-	int sceneIndexBufferSize;
+	uint32_t sceneVertexCount;	// Vertex Count
+	uint32_t sceneObjectCount;	// Object Count
 
-	Vec3 *sceneVerticies;    	// Raw 3D Vec Verticies
-	int *sceneIndexBuffer; 		// Index Buffer
-	Tris3D_ref *sceneTrisRef;	// 3D Reference Triangles buffer
+	Vec3 *sceneVerticies;    	// Raw Verticies
+	Object *sceneObjects;		// Objects in the scene
+
 
 public:
 	Scene();
@@ -23,6 +25,6 @@ public:
 
 // Methods
 public:
-	void loadJSONScene(const char *filename);
+	bool loadJSONScene(const char *filename);
 	void unload();
 };

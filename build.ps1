@@ -16,10 +16,13 @@ $LINKER_FLAGS = "-lSDL3"
 
 
 $buildAll = $false
+$scene_file = "Scenes/cube.json"
+# $scene_file = "Scenes/default.json"
+# $scene_file = "Scenes/myJube.json"
 
 $out_file = "qazwsx.exe"
 
-$src_files = "main", "engine", "utils", "surface", "tris", "scene"
+$src_files = "main", "engine", "utils", "surface", "tris", "scene", "object", "mesh"
 
 $intermediate_dir = "Intermediate/"
 
@@ -102,7 +105,7 @@ g++ $obj_files $C_FLAGS -L $sdl_lib_dir $LINKER_FLAGS -o $out_file
 if (Test-Path ./$out_file) {
 	Write-Output "Build Successfully"
 	Write-Output ""
-	& ./$out_file
+	& ./$out_file $scene_file
 }
 
 else {

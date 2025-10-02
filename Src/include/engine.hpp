@@ -42,7 +42,7 @@ class Engine {
 	public:
 		Engine();
 		~Engine();
-		void pipeline();
+		void pipeline(const char *filename);
 
 	private:
 		void SDLSetup();
