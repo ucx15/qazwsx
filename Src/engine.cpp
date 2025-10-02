@@ -131,11 +131,16 @@ void Engine::transform() {
 
 	// TODO: Replace with proper transformation matrices
 
-	Vec3 translation(0.f, 0.f, -2.5f); 	// Move everything away from camera a bit
+	Vec3 translation(0.f, -1.f, -3.f); 	// Move everything away from camera a bit
 
-	float rotationX = glm::radians(45.0f); // in radians
-	float rotationY = glm::radians(45.0f); // in radians
-	float rotationZ = glm::radians(45.0f); // in radians
+	// float rotationX = glm::radians(45.0f); // in radians
+	float rotationY = glm::radians(10.0f); // in radians
+	// float rotationZ = glm::radians(10.0f); // in radians
+
+	float rotationX = 0.f; // in radians
+	// float rotationY = 0.f; // in radians
+	float rotationZ = 0.f; // in radians
+
 
 	glm::mat4 rotXMat = glm::rotate(glm::mat4(1.0f), rotationX, Vec3(1.0f, 0.0f, 0.0f));
 	glm::mat4 rotYMat = glm::rotate(glm::mat4(1.0f), rotationY, Vec3(0.0f, 1.0f, 0.0f));
@@ -236,9 +241,9 @@ void Engine::rasterize() {
 		// enSurface.drawTris(tRender, COLOR_WHITE, 1);
 
 		// Draw Verticies
-		enSurface.fillCircle(a, 2, COLOR_WHITE);
-		enSurface.fillCircle(b, 2, COLOR_WHITE);
-		enSurface.fillCircle(c, 2, COLOR_WHITE);
+		// enSurface.fillCircle(a, 2, COLOR_WHITE);
+		// enSurface.fillCircle(b, 2, COLOR_WHITE);
+		// enSurface.fillCircle(c, 2, COLOR_WHITE);
 	}
 
 	// NOTE: Debug Center Lines

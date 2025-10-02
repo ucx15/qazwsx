@@ -18,7 +18,8 @@ $LINKER_FLAGS = "-lSDL3"
 $buildAll = $false
 # $scene_file = "Scenes/cube.json"
 # $scene_file = "Scenes/sphere.json"
-$scene_file = "Scenes/myJube.json"
+# $scene_file = "Scenes/myJube.json"
+$scene_file = "Scenes/monkey.json"
 
 $out_file = "qazwsx.exe"
 
