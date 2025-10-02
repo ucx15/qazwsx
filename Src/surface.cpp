@@ -67,7 +67,7 @@ void Surface::_gamma() {
 // --------- Public Methods ---------
 void Surface::tonemap() {
     // this->_aces();  // ACES TMO
-    this->_reinhard();  // Reinhard TMO
+    // this->_reinhard();  // Reinhard TMO
     this->_gamma();
 }
 
@@ -78,9 +78,9 @@ void Surface::toU32Surface(uint32_t *buffer) {
     uint8_t b;
 
     for (int i=0; i<surfSize; i++) {
-        r = _surfData[i].r * 0xFF;
-        g = _surfData[i].g * 0xFF;
-        b = _surfData[i].b * 0xFF;
+        r = std::max(0, std::min(255, int(_surfData[i].r * 0xFF)));
+        g = std::max(0, std::min(255, int(_surfData[i].g * 0xFF)));
+        b = std::max(0, std::min(255, int(_surfData[i].b * 0xFF)));
 
         buffer[i] = (uint32_t) (r<<24) | (g<<16) | (b<<8) | 0xFF;
     }

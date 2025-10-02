@@ -248,6 +248,9 @@ void Engine::rasterize() {
 }
 
 void Engine::render() {
+	// Tonemapping
+	enSurface.tonemap();
+
 	// Copying data to 32 bit buffer
 	enSurface.toU32Surface(enTextureBuffer);
 
