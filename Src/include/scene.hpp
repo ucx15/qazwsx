@@ -13,6 +13,7 @@ class Scene {
 public:
 	// Scene Data
 	uint32_t sceneVertexCount;	// Vertex Count
+	uint32_t sceneTriangleCount;	// Triangle Count
 	uint32_t sceneObjectCount;	// Object Count
 
 	Vec3 *sceneVerticies;    	// Raw Verticies

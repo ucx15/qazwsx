@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <time.h>
 
 
@@ -55,12 +55,11 @@ void Surface::_reinhard() {
 
 void Surface::_gamma() {
     for (int i=0; i<surfSize; i++) {
-        _surfData[i].r = sqrtf(_surfData[i].r);
-        _surfData[i].g = sqrtf(_surfData[i].g);
-        _surfData[i].b = sqrtf(_surfData[i].b);
+        _surfData[i].r = std::powf(_surfData[i].r, 1.f/2.2f);
+        _surfData[i].g = std::powf(_surfData[i].g, 1.f/2.2f);
+        _surfData[i].b = std::powf(_surfData[i].b, 1.f/2.2f);
     }
 }
-
 
 
 
@@ -72,15 +71,15 @@ void Surface::tonemap() {
 }
 
 void Surface::toU32Surface(uint32_t *buffer) {
-
     uint8_t r;
     uint8_t g;
     uint8_t b;
 
     for (int i=0; i<surfSize; i++) {
-        r = std::max(0, std::min(255, int(_surfData[i].r * 0xFF)));
-        g = std::max(0, std::min(255, int(_surfData[i].g * 0xFF)));
-        b = std::max(0, std::min(255, int(_surfData[i].b * 0xFF)));
+
+        r = std::max(0, std::min(int(_surfData[i].r * 255.f), 255));
+        g = std::max(0, std::min(int(_surfData[i].g * 255.f), 255));
+        b = std::max(0, std::min(int(_surfData[i].b * 255.f), 255));
 
         buffer[i] = (uint32_t) (r<<24) | (g<<16) | (b<<8) | 0xFF;
     }

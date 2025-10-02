@@ -15,6 +15,7 @@ using json = nlohmann::json;
 // Constructors and Destructors
 Scene::Scene() {
 	sceneVertexCount = 0;
+	sceneTriangleCount = 0;
 	sceneObjectCount = 0;
 	sceneVerticies = nullptr;
 	sceneObjects = nullptr;
@@ -97,6 +98,7 @@ bool Scene::loadJSONScene(const char *filename) {
 	for (uint32_t i=0; i<sceneObjectCount; i++) {
 		auto objData = objs[i];
 		Object &obj = sceneObjects[i];
+
 		obj.mesh = new Mesh();
 		Mesh &mesh = *obj.mesh;
 
@@ -106,20 +108,17 @@ bool Scene::loadJSONScene(const char *filename) {
 
 		uint32_t vertexCount = objData.value("vertexCount", -1);
 		uint32_t indexCount = objData.value("indexCount", -1);
+		uint32_t triangleCount = objData.value("triangleCount", -1);
 		obj.id = i;
 
-		if (vertexCount <= 0 || indexCount <= 0) {
-			std::cerr << "No vertex or index in the object: '" << objName << "'\n";
+		if (vertexCount <= 0 || indexCount <= 0 || triangleCount <= 0) {
+			std::cerr << "No vertex or triangle in the object: '" << objName << "'\n";
 			return false;
 		}
-		mesh.vertexCount = vertexCount;
-		mesh.indexCount = indexCount;
 
-
-		std::cout << "  Mesh Vertex Count: " << mesh.vertexCount << ", Mesh Index Count: " << mesh.indexCount << std::endl;
 
 		// Validate counts
-		if (objData["indices"].size() != indexCount*3) {
+		if (objData["indices"].size() != indexCount) {
 			std::cerr << "Index count mismatch in scene file." << std::endl;
 			std::cerr << "Expected " << indexCount*3 << " values, got " << objData["indices"].size() << std::endl;
 			return false;
@@ -131,14 +130,25 @@ bool Scene::loadJSONScene(const char *filename) {
 			return false;
 		}
 
-		const auto &indices = objData["indices"];
+		mesh.vertexCount = vertexCount;
+		mesh.indexCount = indexCount;
+		mesh.triangleCount = triangleCount;
+		std::cout
+			<< "  Mesh Vertex Count: " << mesh.vertexCount
+			<< ", Mesh Index Count: " << mesh.indexCount
+			<< ", Mesh Triangle Count: " << mesh.triangleCount
+			<< std::endl;
+
 
 		// Load the indices
-		mesh.indices = new uint32_t[mesh.indexCount*3];
-		for (uint32_t j=0; j<mesh.indexCount*3; j++) {
+		const auto &indices = objData["indices"];
+		mesh.indices = new uint32_t[mesh.indexCount];
+
+		for (uint32_t j=0; j<mesh.indexCount; j++) {
 			mesh.indices[j] = indices[j];
 		}
 
+		sceneTriangleCount += triangleCount;
 		std::cout << "  Loaded Object: '" << obj.name << "' successfully.\n";
 	}
 
@@ -152,6 +162,8 @@ void Scene::unload() {
 	delete [] sceneVerticies;
 	sceneVerticies = nullptr;
 	sceneVertexCount = 0;
+
+	sceneTriangleCount = 0;
 
 	delete [] sceneObjects;
 	sceneObjects = nullptr;

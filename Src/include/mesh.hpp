@@ -16,11 +16,13 @@ class Mesh {
 	// Attributes
 	public:
 		uint32_t vertexCount;
-
 		uint32_t indexCount;
+		uint32_t triangleCount;
+
 		uint32_t *indices;
 
 	// Methods
 	public:
 
 };
+

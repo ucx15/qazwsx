@@ -275,6 +275,7 @@
 		{
 			"name" : "Jube",
 			"vertexCount" : 264,
+			"indexCount" : 1740,
 			"triangleCount" : 580,
 
 			"indices" : [

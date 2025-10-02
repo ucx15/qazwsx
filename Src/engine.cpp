@@ -92,7 +92,7 @@ void Engine::engineDestroy() {
 
 }
 
-/* void Engine::loadScene(const char *filename) {
+void Engine::loadScene(const char *filename) {
 	enScene.loadJSONScene(filename);
 
 	enVxCount = enScene.sceneVertexCount;
@@ -110,31 +110,28 @@ void Engine::engineDestroy() {
 	}
 
 	// Set up the engine's triangle references to point to engine vertices
-	for (int i=0, j=0; i<enTriCount; i++) {
-		Tris3D_ref &tRef = enTrisRefBuffer[i];
-		tRef.v1 = &enVerticies[ enScene.sceneIndexBuffer[j++] ];
-		tRef.v2 = &enVerticies[ enScene.sceneIndexBuffer[j++] ];
-		tRef.v3 = &enVerticies[ enScene.sceneIndexBuffer[j++] ];
+	for (uint32_t i=0; i<enScene.sceneObjectCount; i++) {
+		Mesh &mesh = *enScene.sceneObjects[i].mesh;
+
+		for (uint32_t j=0, k=0; j<mesh.triangleCount; j++) {
+			Tris3D_ref &tRef = enTrisRefBuffer[j];
+			tRef.v1 = &enVerticies[ mesh.indices[k++] ];
+			tRef.v2 = &enVerticies[ mesh.indices[k++] ];
+			tRef.v3 = &enVerticies[ mesh.indices[k++] ];
+		}
 	}
 
 	enScene.unload();
 }
- */
 
- void Engine::loadScene(const char *filename) {
-	if (!enScene.loadJSONScene(filename)) {
-		exit(EXIT_FAILURE);
-	}
 
-	exit(EXIT_SUCCESS);
-}
-
+// Geometry Methods (Transformations, Sorting, Projection)
+// Transformation
 void Engine::transform() {
 
 	// TODO: Replace with proper transformation matrices
-	// Move everything away from camera a bit
 
-	Vec3 translation(0.f, 0.f, -5.f);
+	Vec3 translation(0.f, 0.f, -2.5f); 	// Move everything away from camera a bit
 
 	float rotationX = glm::radians(45.0f); // in radians
 	float rotationY = glm::radians(45.0f); // in radians
@@ -175,15 +172,12 @@ void Engine::transform() {
 
 }
 
-
 // Sorting the geometry in Descending order of depth by Tris3D::getCenter().z
 void Engine::sortGeometry() {
 	std::sort(enTrisRefBuffer, enTrisRefBuffer + enTriCount, [](Tris3D_ref &a, Tris3D_ref &b) {
 		return a.getCenter().z < b.getCenter().z;
 	});
 }
-
-// Rendering Methods
 
 // TODO: Handle out of screen projected points
 // Projects 3D Reference Triangles to 2D Triangles
@@ -210,23 +204,18 @@ void Engine::project() {
 			// Normal Space to Screen Space conversion
 			// (-1, 1)  -- x2 ->  (0, 2)  -- /2 ->  (0, 1)  -- xS ->  (0, S)
 			out_vec->x = W * (1.f+out_vec->x)/2.f;
-			out_vec->y = H * (1.f+out_vec->y)/2.f;
+			out_vec->y = H * (1.f-out_vec->y)/2.f;
 		}
 	}
 }
 
+
+// Rendering Methods
 void Engine::rasterize() {
 	// Rendering Triangles from ss_points buffer
 	enSurface.fill(COLOR_BLACK);
 
-	// // Drawing Triangles
-	// for (int i=0; i<enTriCount*3; i+=3) {
-	// 	Vec3 &a = enSSVerticies[ enTriIndex[i]   ];
-	// 	Vec3 &b = enSSVerticies[ enTriIndex[i+1] ];
-	// 	Vec3 &c = enSSVerticies[ enTriIndex[i+2] ];
-	// 	enSurface.fillTris(a,b,c, COLOR_BLUE);
-	// 	enSurface.drawTris(a,b,c, COLOR_WHITE, 1);
-	// }
+	Vec3 light_dir = glm::normalize( Vec3(-1.f, -1.f, -1.f) );
 
 	// Drawing Triangles
 	for (int i=0; i<enTriCount; i++) {
@@ -236,29 +225,31 @@ void Engine::rasterize() {
 		Vec2 &c = tRender.v3;
 
 		// Fill Triangle
-		enSurface.fillTris(tRender, COLOR_BLUE);
+		Vec3 normal = enTrisRefBuffer[i].getNormal();
+		float light_intensity = glm::dot(normal, -light_dir);
+		Color fillColor = COLOR_BLUE * light_intensity;
+
+		// enSurface.fillTris(tRender, COLOR_BLUE);
+		enSurface.fillTris(tRender, fillColor);
+
 		// Draw Triangle
-		enSurface.drawTris(tRender, COLOR_WHITE, 1);
+		// enSurface.drawTris(tRender, COLOR_WHITE, 1);
 
 		// Draw Verticies
-		enSurface.drawCircle(a, 3, COLOR_WHITE, 2);
-		enSurface.drawCircle(b, 3, COLOR_WHITE, 2);
-		enSurface.drawCircle(c, 3, COLOR_WHITE, 2);
-
-		enSurface.fillCircle(a, 3, COLOR_YELLOW);
-		enSurface.fillCircle(b, 3, COLOR_YELLOW);
-		enSurface.fillCircle(c, 3, COLOR_YELLOW);
+		enSurface.fillCircle(a, 2, COLOR_WHITE);
+		enSurface.fillCircle(b, 2, COLOR_WHITE);
+		enSurface.fillCircle(c, 2, COLOR_WHITE);
 	}
 
 	// NOTE: Debug Center Lines
 	enSurface.drawLine(0, H/2, W-1, H/2, COLOR_RED, 1);
 	enSurface.drawLine(W/2, 0, W/2, H-1, COLOR_GREEN, 1);
+
+	// Tonemapping
+	enSurface.tonemap();
 }
 
 void Engine::render() {
-	// Tonemapping
-	enSurface.tonemap();
-
 	// Copying data to 32 bit buffer
 	enSurface.toU32Surface(enTextureBuffer);
 

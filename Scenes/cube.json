@@ -19,7 +19,8 @@
 		{
 			"name": "cube",
 			"vertexCount": 8,
-			"indexCount": 12,
+			"indexCount": 36,
+			"triangleCount": 12,
 
 			"indices": [
 				0, 6, 2,

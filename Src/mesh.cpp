@@ -4,6 +4,7 @@
 Mesh::Mesh() {
 	vertexCount = 0;
 	indexCount = 0;
+	triangleCount = 0;
 	indices  = nullptr;
 }
 
@@ -13,4 +14,5 @@ Mesh::~Mesh() {
 	delete [] indices;
 	indices = nullptr;
 	indexCount = 0;
+	triangleCount = 0;
 }
