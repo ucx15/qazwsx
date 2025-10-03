@@ -22,8 +22,8 @@ $buildAll = $false
 $scene_file = "Scenes/monkey.json"
 
 $out_file = "qazwsx.exe"
+$src_dir = "Src/"
 
-$src_files = "main", "engine", "utils", "surface", "tris", "scene", "object", "mesh"
 
 $intermediate_dir = "Intermediate/"
 
@@ -37,6 +37,12 @@ $sdl_lib_dir = "Libs/SDL3/lib"
 
 
 # -------- BUILD SCRIPT --------
+$src_files = @()
+Get-ChildItem -Path $src_dir -Filter "*.cpp" | ForEach-Object {
+	$file_name = $_.BaseName
+	$src_files += $file_name
+}
+
 $C_FLAGS += $Optimization_flags
 
 if (!(Test-Path("./Out"))) {
@@ -57,7 +63,8 @@ if (Test-Path ./$out_file) {
 Write-Output "Building:"
 foreach ($file in $src_files) {
 	if ($file) {
-
+		# Check if needs to be recompiled
+		# If object file does not exist, or source file is newer than object file,
 		$modifyCondition = $true
 
 		if (Test-Path "$intermediate_dir/${file}.o") {
@@ -66,13 +73,13 @@ foreach ($file in $src_files) {
 			# C++ Impl.
 			$sourceModifiedDate = (Get-Item "Src/${file}.cpp").LastWriteTime
 
+			$modifyCondition = $sourceModifiedDate -gt $targetModifiedDate
+
 			# Header if exists
 			if (Test-Path "Src/Include/${file}.hpp") {
 				$headerModifiedDate = (Get-Item "Src/Include/${file}.hpp").LastWriteTime
-				$modifyCondition = $headerModifiedDate -gt $targetModifiedDate
+				$modifyCondition = $modifyCondition -or ($headerModifiedDate -gt $targetModifiedDate)
 			}
-
-			$modifyCondition = $modifyCondition -or ($sourceModifiedDate -gt $targetModifiedDate)
 		}
 
 		else {
