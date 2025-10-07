@@ -1,11 +1,11 @@
 #pragma once
 
-#include "vec.hpp"
-#include "color.hpp"
-#include "line.hpp"
-#include "tris.hpp"
-#include "rect.hpp"
-#include "circle.hpp"
+#include "../math/vec.hpp"
+#include "../math/color.hpp"
+#include "../primitives/line.hpp"
+#include "../primitives/tris.hpp"
+#include "../primitives/rect.hpp"
+#include "../primitives/circle.hpp"
 
 
 class Surface {

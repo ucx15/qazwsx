@@ -3,7 +3,7 @@
 // #include <string>
 #include <cstdint>
 
-#include "vec.hpp"
+#include "../math/vec.hpp"
 // #include "tris.hpp"
 
 

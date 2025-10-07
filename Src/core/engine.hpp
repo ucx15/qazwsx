@@ -2,12 +2,12 @@
 
 #include "SDL3/SDL.h"
 
-#include "vec.hpp"
-#include "color.hpp"
-#include "tris.hpp"
-#include "rect.hpp"
-#include "scene.hpp"
-#include "surface.hpp"
+#include "../math/vec.hpp"
+#include "../math/color.hpp"
+#include "../primitives/tris.hpp"
+#include "../primitives/rect.hpp"
+#include "../scene/scene.hpp"
+#include "../render/surface.hpp"
 
 
 class Engine {

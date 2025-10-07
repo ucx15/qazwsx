@@ -28,7 +28,7 @@ $src_dir = "Src/"
 $intermediate_dir = "Intermediate/"
 
 # Include Directories
-$include_dir = "Src/Include/"
+$include_dir = "Src/"
 $sdl_inc_dir = "Libs/SDL3/include/"
 $stb_inc_dir = "Libs/"
 
@@ -38,9 +38,9 @@ $sdl_lib_dir = "Libs/SDL3/lib"
 
 # -------- BUILD SCRIPT --------
 $src_files = @()
-Get-ChildItem -Path $src_dir -Filter "*.cpp" | ForEach-Object {
-	$file_name = $_.BaseName
-	$src_files += $file_name
+
+Get-ChildItem -Recurse -Path $src_dir -Filter "*.cpp" | ForEach-Object {
+	$src_files += $_.FullName
 }
 
 $C_FLAGS += $Optimization_flags
@@ -62,50 +62,46 @@ if (Test-Path ./$out_file) {
 # Compiling
 Write-Output "Building:"
 foreach ($file in $src_files) {
-	if ($file) {
-		# Check if needs to be recompiled
-		# If object file does not exist, or source file is newer than object file,
-		$modifyCondition = $true
+	$relative_path = $file.Replace((Get-Location).Path + "\", "")
+	$base_name = [System.IO.Path]::GetFileNameWithoutExtension($file)
+	$obj_file = "$intermediate_dir/${base_name}.o"
 
-		if (Test-Path "$intermediate_dir/${file}.o") {
-			$targetModifiedDate = (Get-Item "$intermediate_dir/${file}.o").LastWriteTime
 
-			# C++ Impl.
-			$sourceModifiedDate = (Get-Item "Src/${file}.cpp").LastWriteTime
+	# Check if needs to be recompiled
+	$modifyCondition = $true
 
-			$modifyCondition = $sourceModifiedDate -gt $targetModifiedDate
+	if (Test-Path $obj_file) {
+		$targetModifiedDate = (Get-Item $obj_file).LastWriteTime
+		$sourceModifiedDate = (Get-Item $file).LastWriteTime
+		$modifyCondition = $sourceModifiedDate -gt $targetModifiedDate
 
-			# Header if exists
-			if (Test-Path "Src/Include/${file}.hpp") {
-				$headerModifiedDate = (Get-Item "Src/Include/${file}.hpp").LastWriteTime
-				$modifyCondition = $modifyCondition -or ($headerModifiedDate -gt $targetModifiedDate)
-			}
+		# Check corresponding header file if it exists
+		$header_file = $file.Replace(".cpp", ".hpp")
+		if (Test-Path $header_file) {
+			$headerModifiedDate = (Get-Item $header_file).LastWriteTime
+			$modifyCondition = $modifyCondition -or ($headerModifiedDate -gt $targetModifiedDate)
+		}
+	}
+
+	if (($modifyCondition -eq $true) -or ($buildAll -eq $true)) {
+		if (Test-Path $obj_file) {
+			Remove-Item $obj_file
 		}
 
-		else {
-			$modifyCondition = $true
-		}
-
-		if (($modifyCondition -eq $true) -or ($buildAll -eq $true)) {
-			Write-Output "    ${file}.cpp"
-
-			if (Test-Path "$intermediate_dir/${file}.o") {
-				Remove-Item "$intermediate_dir/${file}.o"
-			}
-
-			g++ $C_FLAGS -I $include_dir -I $stb_inc_dir -I $sdl_inc_dir -o "$intermediate_dir/${file}.o" -c "Src/${file}.cpp"
-
-		}
+		Write-Output "    $relative_path"
+		g++ $C_FLAGS -I $include_dir -I $stb_inc_dir -I $sdl_inc_dir -o $obj_file -c $file
 	}
 }
 
-
-
 # Linking
-$obj_files = Get-ChildItem -Path $intermediate_dir
+$obj_files = Get-ChildItem -Path $intermediate_dir -Filter "*.o"
 
 Write-Output "Linking"
-g++ $obj_files $C_FLAGS -L $sdl_lib_dir $LINKER_FLAGS -o $out_file
+if ($obj_files.Count -gt 0) {
+	g++ $obj_files.FullName $C_FLAGS -L $sdl_lib_dir $LINKER_FLAGS -o $out_file
+} else {
+	Write-Output "No object files found to link!"
+}
 
 
 # Running current build

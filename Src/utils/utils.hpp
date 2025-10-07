@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
-#include "vec.hpp"
-#include "color.hpp"
+#include "../math/vec.hpp"
+#include "../math/color.hpp"
 
 
 using namespace std::chrono;

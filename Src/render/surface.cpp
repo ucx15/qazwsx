@@ -8,7 +8,7 @@
 #include "stb_image_write_clean.h"
 
 #include "surface.hpp"
-#include "utils.hpp"
+#include "../utils/utils.hpp"
 
 
 #define ACES_a 0.0245786f
