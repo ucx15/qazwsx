@@ -131,7 +131,7 @@ void Engine::transform() {
 
 	// TODO: Replace with proper transformation matrices
 
-	Vec3 translation(0.f, -1.f, -3.f); 	// Move everything away from camera a bit
+	Vec3 translation(0.f, 0.f, -3.f); 	// Move everything away from camera a bit
 
 	// float rotationX = glm::radians(45.0f); // in radians
 	float rotationY = glm::radians(10.0f); // in radians
@@ -235,7 +235,8 @@ void Engine::rasterize() {
 		Color fillColor = COLOR_BLUE * light_intensity;
 
 		// enSurface.fillTris(tRender, COLOR_BLUE);
-		enSurface.fillTris(tRender, fillColor);
+		// enSurface.fillTris(tRender, fillColor);
+		enSurface.fillTris(tRender, normal);
 
 		// Draw Triangle
 		// enSurface.drawTris(tRender, COLOR_WHITE, 1);
