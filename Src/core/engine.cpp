@@ -20,11 +20,23 @@ handled by Engine::pipeline()
 
 // Constructors and Destructors
 Engine::Engine() {
+	SDLWindow = nullptr;
+	SDLRenderer = nullptr;
+	SDLTexture = nullptr;
+
+	enTextureBuffer = nullptr;
+	enBuffer = nullptr;
+	enVerticies = nullptr;
+	enTrisRefBuffer = nullptr;
+	enTrisProjectedBuffer = nullptr;
+
+	this->engineSetup();
 	this->SDLSetup();
 }
 
 Engine::~Engine() {
 	this->SDLDestroy();
+	this->engineDestroy();
 }
 
 
@@ -35,7 +47,7 @@ void Engine::SDLSetup() {
 		exit(EXIT_FAILURE);
 	}
 
-	SDLWindow = SDL_CreateWindow("LiRaster", W, H, 0);
+	SDLWindow = SDL_CreateWindow("Qazwsx", enSettings.W, enSettings.H, 0);
 	if ( !SDLWindow ) {
 		SDL_Log("SDL_CreateWindow creation failed: %s", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -47,7 +59,7 @@ void Engine::SDLSetup() {
 		exit(EXIT_FAILURE);
 	}
 
-	SDLTexture = SDL_CreateTexture(SDLRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, W, H);
+	SDLTexture = SDL_CreateTexture(SDLRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, enSettings.W, enSettings.H);
 	if ( !SDLTexture ) {
 		SDL_Log("SDL_CreateTexture failed: %s", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -72,13 +84,27 @@ void Engine::handleEvents() {
 
 // Engine Methods (Setup, Destruction and Scene Loading)
 void Engine::engineSetup() {
-	MEM_ALLOC(enTextureBuffer, uint32_t, W*H);
-	MEM_ALLOC(enBuffer, Color,W*H);
-
-	enSurface = Surface(enBuffer, W, H);
-	projMat = glm::perspective(glm::radians(AOV), ASR, EPSILON, FAR_CLIP);
-
 	isRunning = true;
+	deltaTime = 0.0f;
+
+	// Load Settings
+	const char *settingsPath = "settings.json";
+
+	if ( !enSettings.loadFromJSON(settingsPath) ) {
+		std::cerr << "Failed to load settings from " << settingsPath << ". Using default settings." << std::endl;
+	}
+
+
+	MEM_ALLOC(enTextureBuffer, uint32_t, enSettings.W*enSettings.H);
+	MEM_ALLOC(enBuffer, Color,enSettings.W*enSettings.H);
+
+	projMat = glm::perspective(glm::radians(enSettings.AOV), enSettings.ASR, enSettings.EPSILON, enSettings.FAR_CLIP);
+	enSurface = Surface(enBuffer, enSettings.W, enSettings.H);
+
+	// will be initialized when scene is loaded
+	enScene = {};
+	enVxCount = 0;
+	enTriCount = 0;
 }
 
 void Engine::engineDestroy() {
@@ -208,8 +234,8 @@ void Engine::project() {
 
 			// Normal Space to Screen Space conversion
 			// (-1, 1)  -- x2 ->  (0, 2)  -- /2 ->  (0, 1)  -- xS ->  (0, S)
-			out_vec->x = W * (1.f+out_vec->x)/2.f;
-			out_vec->y = H * (1.f-out_vec->y)/2.f;
+			out_vec->x = enSettings.W * (1.f+out_vec->x)/2.f;
+			out_vec->y = enSettings.H * (1.f-out_vec->y)/2.f;
 		}
 	}
 }
@@ -248,8 +274,12 @@ void Engine::rasterize() {
 	}
 
 	// NOTE: Debug Center Lines
-	enSurface.drawLine(0, H/2, W-1, H/2, COLOR_RED, 1);
-	enSurface.drawLine(W/2, 0, W/2, H-1, COLOR_GREEN, 1);
+	if (enSettings.DEBUG) {
+		int w = enSettings.W;
+		int h = enSettings.H;
+		enSurface.drawLine(0, h/2, w-1, h/2, COLOR_RED, 1);
+		enSurface.drawLine(w/2, 0, w/2, h-1, COLOR_GREEN, 1);
+	}
 
 	// Tonemapping
 	enSurface.tonemap();
@@ -260,7 +290,7 @@ void Engine::render() {
 	enSurface.toU32Surface(enTextureBuffer);
 
 	// Copying data to VRAM
-	SDL_UpdateTexture(SDLTexture, NULL, enTextureBuffer, W*4);
+	SDL_UpdateTexture(SDLTexture, NULL, enTextureBuffer, enSettings.W*4);
 	if ( !SDLTexture ) {
 		SDL_Log("SDL_CreateTextureFromSurface failed: %s", SDL_GetError());
 		return;
@@ -274,9 +304,6 @@ void Engine::render() {
 
 
 void Engine::pipeline(const char *filename) {
-	// Engine Class Startup code
-	this->engineSetup();
-
 	// Loading Scene into Memory
 	// this->loadScene("Scenes/default.json");
 	this->loadScene(filename);
@@ -350,7 +377,7 @@ void Engine::pipeline(const char *filename) {
 		lastLogTime += deltaTime;
 
 		// Logs all the timings
-		if ( lastLogTime>UPDATE_TIME ) {
+		if ( lastLogTime>enSettings.UPDATE_TIME ) {
 			lastLogTime = 0.f;
 
 			auto tRender = TIME_DUR(tPtRender2, tPtRender1);
@@ -362,13 +389,10 @@ void Engine::pipeline(const char *filename) {
 	TIME_PT tPtSave1, tPtSave2;
 	// Save the Surface
 	tPtSave1 = TIME_NOW();
-	enSurface.savePNG("Out/img.png");
+	enSurface.savePNG( std::format("Out/{}.png", enScene.name.c_str()).c_str() );
 	tPtSave2 = TIME_NOW();
 
 	uint64_t t_save_us   = TIME_DUR(tPtSave2, tPtSave1);
 	std::cout << "\nSave\t " << t_save_us / 1000.f << " ms\n\n";
 
-
-	// Engine Class Destructor Code
-	this->engineDestroy();
 }

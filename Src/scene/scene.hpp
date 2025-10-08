@@ -2,11 +2,11 @@
 
 #pragma once
 
+#include <string>
 #include <cstdint>
 
 #include "../math/vec.hpp"
 #include "object.hpp"
-
 
 class Scene {
 
@@ -19,6 +19,7 @@ public:
 	Vec3 *sceneVerticies;    	// Raw Verticies
 	Object *sceneObjects;		// Objects in the scene
 
+	std::string name;			// Scene Name
 
 public:
 	Scene();

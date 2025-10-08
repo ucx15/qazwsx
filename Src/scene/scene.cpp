@@ -19,6 +19,7 @@ Scene::Scene() {
 	sceneObjectCount = 0;
 	sceneVerticies = nullptr;
 	sceneObjects = nullptr;
+	name = "default";
 }
 
 Scene::~Scene() {
@@ -49,6 +50,7 @@ bool Scene::loadJSONScene(const char *filename) {
 
 	sceneVertexCount = data.value("vertexCount", -1);
 	sceneObjectCount = data.value("objectCount", -1);
+	name = data.value("name", "default");
 
 	if (sceneVertexCount <= 0 || sceneObjectCount <= 0) {
 		std::cerr << "No vertex or triangle in scene file." << std::endl;
@@ -153,7 +155,7 @@ bool Scene::loadJSONScene(const char *filename) {
 	}
 
 	file.close();
-	std::cout << "\nScene loaded successfully.\n";
+	std::cout << "\nScene loaded successfully.\n\n";
 	return true;
 
 }

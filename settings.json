@@ -1,0 +1,13 @@
+{
+	"W" : 640,
+	"H" : 480,
+	"AOV" : 45.0,
+
+	"FAR_CLIP" : 1000000.0,
+	"NEAR_CLIP" : 0.001,
+	"EPSILON" : 0.000001,
+
+	"FPS" : 60,
+	"UPDATE_TIME" : 1.0,
+	"DEBUG" : false
+}

@@ -8,7 +8,7 @@
 #include "../primitives/rect.hpp"
 #include "../scene/scene.hpp"
 #include "../render/surface.hpp"
-
+#include "settings.hpp"
 
 class Engine {
 
@@ -20,6 +20,7 @@ class Engine {
 		SDL_Event SDLEvent;
 
 		// Engine Stuff
+		Settings enSettings;		// Engine Settings
 		uint32_t *enTextureBuffer;  // intermediate Buffer for writing to SDLTexture
 		Color *enBuffer;            // Array of pixels
 		Surface enSurface;

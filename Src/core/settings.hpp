@@ -1,16 +1,27 @@
 # pragma once
 
+class Settings {
+public:
+	float FAR_CLIP; 	// Far clip
+	float NEAR_CLIP; 	// Near clip
+	float EPSILON; 		// Epsilon
+	float AOV; 			// Angle of View
 
-const float FAR_CLIP = 1E8F;  // Far clip
-const float EPSILON  = 1E-8F; // Near clip
-const float AOV = 45;         // Angle of View
+	int W;
+	int H;
 
-const int W = 640;
-const int H = 480;
-constexpr float ASR = (float) W/H;
+	float ASR;
 
-const int FPS = 240;
+	int FPS;
 
-const float UPDATE_TIME = 2.f;  // in sec
+	float UPDATE_TIME;  // in sec
+	bool DEBUG;
 
-// Flags
+public:
+	Settings();
+	~Settings();
+
+public:
+	bool loadFromJSON(const char* path);
+	bool saveToJSON(const char* path);
+};
