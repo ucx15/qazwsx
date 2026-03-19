@@ -2,10 +2,11 @@ Intermediate/
 Tests/
 Objs/
 
-Libs/
+# Libs/
 
 Out/*.png
 *.exe
 *.dll
+./qazwsx
 
 .vscode/
