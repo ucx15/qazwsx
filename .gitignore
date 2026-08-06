@@ -13,3 +13,4 @@ Out/*.png
 
 build.ps1
 build.sh
+settings.json

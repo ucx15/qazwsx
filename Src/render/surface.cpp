@@ -5,7 +5,7 @@
 
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "STB/stb_image_write.h"
 
 #include "surface.hpp"
 #include "../utils/utils.hpp"
