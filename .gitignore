@@ -1,12 +1,15 @@
+.vscode/
+
 Intermediate/
+Libs/
 Tests/
 Objs/
 
-Libs/*
-
 Out/*.png
+
 *.exe
 *.dll
 ./qazwsx
 
-.vscode/
+build.ps1
+build.sh
